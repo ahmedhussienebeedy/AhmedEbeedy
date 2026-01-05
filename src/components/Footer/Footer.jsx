@@ -1,8 +1,10 @@
 import React from "react";
 import mylogo from "../../assets/images/mylogo.png";
 import { FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-export default function Footer() {
+export default function Footer({ whatsappNumber, message }) {
+
   return (
     <footer className="bg-gray-950 text-white py-10 px-4 border-t border-gray-800">
       <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-6">
@@ -26,31 +28,57 @@ export default function Footer() {
           and Tailwind CSS.
         </p>
 
-        {/* Links */}
+        {/* Navigation Links */}
         <ul className="flex flex-wrap justify-center gap-6 text-sm text-gray-300">
-          <li className="hover:text-indigo-500 transition cursor-pointer">Home</li>
-          <li className="hover:text-indigo-500 transition cursor-pointer">About</li>
-          <li className="hover:text-indigo-500 transition cursor-pointer">Skills</li>
-          <li className="hover:text-indigo-500 transition cursor-pointer">Contact</li>
+          <li>
+            <Link to="/" className="hover:text-indigo-500 transition">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/about" className="hover:text-indigo-500 transition">
+              About
+            </Link>
+          </li>
+          <li>
+            <Link to="/skills" className="hover:text-indigo-500 transition">
+              Skills
+            </Link>
+          </li>
+          <li>
+            <Link to="/contact" className="hover:text-indigo-500 transition">
+              Contact
+            </Link>
+          </li>
         </ul>
 
         {/* Social Icons */}
         <div className="flex gap-5 text-xl">
           <a
-            href="#"
-            className="text-gray-400 hover:text-indigo-500 transition"
+            href="https://github.com/ahmedhussienebeedy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-indigo-500 hover:scale-110 transition-transform"
           >
             <FaGithub />
           </a>
+
           <a
-            href="#"
-            className="text-gray-400 hover:text-indigo-500 transition"
+            href="https://www.linkedin.com/in/YOUR_USERNAME"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-indigo-500 hover:scale-110 transition-transform"
           >
             <FaLinkedin />
           </a>
+
           <a
-            href="#"
-            className="text-gray-400 hover:text-green-500 transition"
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+              message
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-green-500 hover:scale-110 transition-transform"
           >
             <FaWhatsapp />
           </a>
