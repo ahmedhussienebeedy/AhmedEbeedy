@@ -38,8 +38,8 @@ export default function Home() {
       // بعد ما TTS يخلص نرجع نسمع لو recording مش متوقف
       if (!isStoppedRef.current) recognitionRef.current?.start();
     } catch (err) {
-      setAnswer("حصلت مشكلة في السيرفر");
-      await speak("حصلت مشكلة في السيرفر");
+      setAnswer("Server failed");
+      await speak("Server failed");
       if (!isStoppedRef.current) recognitionRef.current?.start();
     }
   };
@@ -92,48 +92,50 @@ export default function Home() {
   };
 
   return (
+   <>
     <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center gap-6 p-4">
 
-      {/* صورة */}
-      <div className="w-72 rounded-2xl bg-gray-900 p-2 shadow-xl">
-        <img src={cvImage} alt="CV" className="rounded-xl" />
-      </div>
+{/* صورة */}
+<div className="w-72 rounded-2xl bg-gray-900 p-2 shadow-xl">
+  <img src={cvImage} alt="CV" className="rounded-xl" />
+</div>
 
-      {/* Chat Box */}
-      <div className="w-full max-w-md bg-gray-900 rounded-xl p-4">
-        <h2 className="text-indigo-400 font-bold mb-2">Ahmed Ebeedy Chatbot</h2>
-        <div className="bg-gray-800 p-3 rounded-lg min-h-[70px] text-gray-300 mb-3">
-          {answer || "iam ahmed ebeedy assistant.... 💬"}
-        </div>
+{/* Chat Box */}
+<div className="w-full max-w-md bg-gray-900 rounded-xl p-4">
+  <h2 className="text-indigo-400 font-bold mb-2">Ahmed Ebeedy Chatbot</h2>
+  <div className="bg-gray-800 p-3 rounded-lg min-h-[70px] text-gray-300 mb-3">
+    {answer || "iam ahmed ebeedy assistant.... 💬"}
+  </div>
 
-        {/* الكتابة اليدوية */}
-        <div className="flex gap-2 mb-3">
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder=" Ask Question..."
-            className="flex-1 px-3 py-2 rounded-lg bg-gray-700 outline-none"
-          />
-          <button
-            onClick={handleSendText}
-            className="bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-600"
-          >
-            Send
-          </button>
-        </div>
-      </div>
+  {/* الكتابة اليدوية */}
+  <div className="flex gap-2 mb-3">
+    <input
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      placeholder=" Ask Question..."
+      className="flex-1 px-3 py-2 rounded-lg bg-gray-700 outline-none"
+    />
+    <button
+      onClick={handleSendText}
+      className="bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-600"
+    >
+      Send
+    </button>
+  </div>
+</div>
 
-      {/* Voice Controls */}
-      <div className="flex gap-3">
-        <button
-          onClick={toggleRecording}
-          className={`px-5 py-2 rounded-lg ${
-            recording ? "bg-red-500" : "bg-green-500"
-          }`}
-        >
-          {recording ? "Stop Voice" : "Start Voice"}
-        </button>
-      </div>
-    </div>
+{/* Voice Controls */}
+<div className="flex gap-3">
+  <button
+    onClick={toggleRecording}
+    className={`px-5 py-2 rounded-lg ${
+      recording ? "bg-red-500" : "bg-green-500"
+    }`}
+  >
+    {recording ? "Stop Voice" : "Start Voice"}
+  </button>
+</div>
+</div>
+   </>
   );
 }

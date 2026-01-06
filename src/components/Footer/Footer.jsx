@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 export default function Footer({ whatsappNumber, message }) {
 
   return (
+  <>
     <footer className="bg-gray-950 text-white py-10 px-4 border-t border-gray-800">
       <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-6">
 
@@ -90,5 +91,6 @@ export default function Footer({ whatsappNumber, message }) {
         </span>
       </div>
     </footer>
+  </>
   );
 }

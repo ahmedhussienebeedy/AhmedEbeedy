@@ -28,6 +28,8 @@
 
   "dependencies": {
 
+    "@emotion/is-prop-valid": "^1.4.0",
+
     "@fortawesome/fontawesome-free": "^7.1.0",
 
     "@preline/theme-switch": "^3.2.3",

@@ -14,8 +14,7 @@ export  function Layout() {
       <Outlet />
       <Footer
         whatsappNumber={whatsappNumber}
-        message={message}
-      />
+        message={message} />
     </>
   );
 }

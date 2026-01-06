@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import mylogo from "../../assets/images/mylogo.png";
 import {  AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+
 
 export default function Navbar() {
   const [show, setShow] = useState(true);
@@ -33,105 +35,39 @@ export default function Navbar() {
   }, [lastScrollY]);
 
   return (
+ <>
+  
     <AnimatePresence>
-      {show && (
-        <motion.nav
-          key="navbar"
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-6xl
-                     rounded-2xl border border-white/10
-                     bg-white/5 backdrop-blur-xl
-                     shadow-lg shadow-indigo-500/10"
-        >
-          <div className="flex items-center justify-between px-6 py-4">
-            {/* Logo */}
-            <NavLink to="/" className="flex items-center gap-3">
-              <img
-                src={mylogo}
-                alt="Ahmed Ebeedy"
-                className="w-9 h-9 rounded-full shadow-md"
-              />
-              <span className="font-bold text-indigo-500 tracking-wide">
-                Ahmed Ebeedy
-              </span>
-            </NavLink>
-
-            {/* Desktop Links */}
-            <ul className="hidden md:flex items-center gap-8 text-sm font-medium">
-              {navItems.map((item, index) => (
-                <li key={index} className="relative group">
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      `transition ${isActive ? "text-indigo-500" : "text-gray-200"}`
-                    }
-                  >
-                    {item.name}
-                    <span className="absolute left-0 -bottom-1 h-0.5 w-full
-                                     scale-x-0 bg-indigo-500 rounded-full
-                                     transition-transform duration-300
-                                     origin-left group-hover:scale-x-100" />
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-
-            {/* Mobile Hamburger */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="flex flex-col w-6 h-6 justify-between items-center group"
-              >
-                <span
-                  className={`block h-0.5 w-full bg-white rounded transform transition duration-300 ${
-                    mobileOpen ? "rotate-45 translate-y-2" : ""
-                  }`}
-                />
-                <span
-                  className={`block h-0.5 w-full bg-white rounded transition duration-300 ${
-                    mobileOpen ? "opacity-0" : ""
-                  }`}
-                />
-                <span
-                  className={`block h-0.5 w-full bg-white rounded transform transition duration-300 ${
-                    mobileOpen ? "-rotate-45 -translate-y-2" : ""
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          <motion.ul
-            key="mobileMenu"
-            initial={{ opacity: 0, y: -20 }}
-            animate={mobileOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className={`md:hidden flex flex-col gap-4 px-6 pb-4 text-center bg-white/10 backdrop-blur-xl rounded-b-2xl ${
-              mobileOpen ? "block" : "hidden"
-            }`}
+  {mobileOpen && (
+    <motion.ul
+      key="mobileMenu"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="md:hidden flex flex-col gap-4 px-6 pb-4 text-center
+                 bg-white/10 backdrop-blur-xl rounded-b-2xl"
+    >
+      {navItems.map((item) => (
+        <li key={item.path}>
+          <NavLink
+            to={item.path}
+            className={({ isActive }) =>
+              `block py-2 font-semibold text-lg ${
+                isActive ? "text-indigo-500" : "text-gray-200"
+              }`
+            }
+            onClick={() => setMobileOpen(false)}
           >
-            {navItems.map((item, index) => (
-              <li key={index}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `block py-2 font-semibold text-lg ${
-                      isActive ? "text-indigo-500" : "text-gray-200"
-                    }`
-                  }
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.name}
-                </NavLink>
-              </li>
-            ))}
-          </motion.ul>
-        </motion.nav>
-      )}
-    </AnimatePresence>
+            {item.name}
+          </NavLink>
+        </li>
+      ))}
+    </motion.ul>
+  )}
+</AnimatePresence>
+
+    
+ </>
   );
 }
