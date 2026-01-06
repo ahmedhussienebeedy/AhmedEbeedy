@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import mylogo from "../../assets/images/mylogo.png";
-import { motion, AnimatePresence } from "framer-motion";
+import {  AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [show, setShow] = useState(true);
@@ -11,7 +11,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
-    { name: "projects", path: "/projects" },
+    { name: "Projects", path: "/projects" },
     { name: "Contact", path: "/contact" },
   ];
 
@@ -33,6 +33,7 @@ export default function Navbar() {
     <AnimatePresence>
       {show && (
         <motion.nav
+          key="navbar"
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
@@ -62,9 +63,7 @@ export default function Navbar() {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `transition ${
-                        isActive ? "text-indigo-500" : "text-gray-200"
-                      }`
+                      `transition ${isActive ? "text-indigo-500" : "text-gray-200"}`
                     }
                   >
                     {item.name}
@@ -103,33 +102,31 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu */}
-          <AnimatePresence>
-            {mobileOpen && (
-              <motion.ul
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="md:hidden flex flex-col gap-4 px-6 pb-4 text-center bg-white/10 backdrop-blur-xl rounded-b-2xl"
-              >
-                {navItems.map((item, index) => (
-                  <li key={index}>
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        `block py-2 font-semibold text-lg ${
-                          isActive ? "text-indigo-500" : "text-gray-200"
-                        }`
-                      }
-                      onClick={() => setMobileOpen(false)} // close menu on click
-                    >
-                      {item.name}
-                    </NavLink>
-                  </li>
-                ))}
-              </motion.ul>
-            )}
-          </AnimatePresence>
+          <motion.ul
+            key="mobileMenu"
+            initial={{ opacity: 0, y: -20 }}
+            animate={mobileOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className={`md:hidden flex flex-col gap-4 px-6 pb-4 text-center bg-white/10 backdrop-blur-xl rounded-b-2xl ${
+              mobileOpen ? "block" : "hidden"
+            }`}
+          >
+            {navItems.map((item, index) => (
+              <li key={index}>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `block py-2 font-semibold text-lg ${
+                      isActive ? "text-indigo-500" : "text-gray-200"
+                    }`
+                  }
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {item.name}
+                </NavLink>
+              </li>
+            ))}
+          </motion.ul>
         </motion.nav>
       )}
     </AnimatePresence>

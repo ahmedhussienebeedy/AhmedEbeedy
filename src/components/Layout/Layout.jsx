@@ -1,9 +1,9 @@
 import React from "react";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import  Outlet  from "react-router-dom";
+import  {Outlet}  from "react-router-dom";
 
-export default function Layout() {
+export  function Layout() {
 
   const whatsappNumber = "201040550125";
   const message = "Hello Ahmed, I checked your portfolio!";
