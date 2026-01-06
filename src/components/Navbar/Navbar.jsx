@@ -13,6 +13,9 @@ export default function Navbar() {
     { name: "About", path: "/about" },
     { name: "Projects", path: "/projects" },
     { name: "Contact", path: "/contact" },
+    { name: "*", path: "/Notfound" },
+
+
   ];
 
   // Scroll handler
