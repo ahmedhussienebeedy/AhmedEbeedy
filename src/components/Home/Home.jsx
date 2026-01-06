@@ -25,14 +25,16 @@ export default function Home() {
   const sendMessage = async (msg) => {
     if (!msg.trim()) return;
     try {
-      const res = await fetch(import.meta.env.VITE_API_URL + "/chat", {
+      const res = await fetch("/api/chat", {  // <-- هنا استخدمنا الـ API الجديد
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg }),
       });
+
       const data = await res.json();
       setAnswer(data.reply);
       await speak(data.reply);
+
       // بعد ما TTS يخلص نرجع نسمع لو recording مش متوقف
       if (!isStoppedRef.current) recognitionRef.current?.start();
     } catch (err) {
@@ -99,9 +101,9 @@ export default function Home() {
 
       {/* Chat Box */}
       <div className="w-full max-w-md bg-gray-900 rounded-xl p-4">
-        <h2 className="text-indigo-400 font-bold mb-2"> Ahmed Ebeedy Chatbot</h2>
+        <h2 className="text-indigo-400 font-bold mb-2">Ahmed Ebeedy Chatbot</h2>
         <div className="bg-gray-800 p-3 rounded-lg min-h-[70px] text-gray-300 mb-3">
-          {answer || "Ask Me Any Question.....💬"}
+          {answer || "iam ahmed ebeedy assistant Ask Me.... 💬"}
         </div>
 
         {/* الكتابة اليدوية */}
@@ -109,7 +111,7 @@ export default function Home() {
           <input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Write Your Message..."
+            placeholder=" Ask Question..."
             className="flex-1 px-3 py-2 rounded-lg bg-gray-700 outline-none"
           />
           <button
