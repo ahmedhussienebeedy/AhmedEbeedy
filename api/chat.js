@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
+  // eslint-disable-next-line no-undef
   apiKey: process.env.OPENAI_API_KEY, // تأكد إن القيمة موجودة في Environment Variables بدون علامات اقتباس
 });
 
