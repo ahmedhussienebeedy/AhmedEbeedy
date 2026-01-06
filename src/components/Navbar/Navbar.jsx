@@ -68,7 +68,7 @@ export default function Navbar() {
                     }
                   >
                     {item.name}
-                    <span className="absolute left-0 -bottom-1 h-[2px] w-full
+                    <span className="absolute left-0 -bottom-1 h-0.5 w-full
                                      scale-x-0 bg-indigo-500 rounded-full
                                      transition-transform duration-300
                                      origin-left group-hover:scale-x-100" />

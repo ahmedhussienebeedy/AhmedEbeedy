@@ -77,7 +77,7 @@ export default function Projects() {
           >
             {/* glow border */}
             <div
-              className={`absolute inset-0 bg-gradient-to-br ${project.glow} opacity-0 group-hover:opacity-100 blur-xl transition`}
+              className={`absolute inset-0 bg-linear-to-br ${project.glow} opacity-0 group-hover:opacity-100 blur-xl transition`}
             />
 
             {/* card */}
