@@ -3,98 +3,135 @@ import cvImage from "../../assets/images/cvimage.JPG";
 
 export default function Home() {
   const [answer, setAnswer] = useState("");
+  const [message, setMessage] = useState("");
   const [recording, setRecording] = useState(false);
   const recognitionRef = useRef(null);
+  const isStoppedRef = useRef(true); // عشان نعرف لو المستخدم ضغط Stop
 
-  const whatsappNumber = "201040550125";
-  const message = "Hello! I found your website and would like to chat.";
-
-  // -------------------- TTS --------------------
+  // -------- TTS --------
   const speak = (text) => {
-    if (!window.speechSynthesis || !text) return;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "ar-EG";
-    utterance.rate = 1.3;
-    utterance.pitch = 1;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
+    return new Promise((resolve) => {
+      if (!window.speechSynthesis || !text) return resolve();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "ar-EG";
+      utterance.rate = 1.8;
+      utterance.onend = resolve;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    });
   };
 
-  // -------------------- Live Speech Recognition --------------------
-  const startLiveChat = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return alert("متصفحك مش بيدعم الكلام");
+  // -------- Send message to server --------
+  const sendMessage = async (msg) => {
+    if (!msg.trim()) return;
+    try {
+      const res = await fetch(import.meta.env.VITE_API_URL + "/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg }),
+      });
+      const data = await res.json();
+      setAnswer(data.reply);
+      await speak(data.reply);
+      // بعد ما TTS يخلص نرجع نسمع لو recording مش متوقف
+      if (!isStoppedRef.current) recognitionRef.current?.start();
+    } catch (err) {
+      setAnswer("حصلت مشكلة في السيرفر");
+      await speak("حصلت مشكلة في السيرفر");
+      if (!isStoppedRef.current) recognitionRef.current?.start();
+    }
+  };
+
+  // -------- Initialize recognition --------
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
 
     const recognition = new SpeechRecognition();
     recognition.lang = "ar-EG";
     recognition.interimResults = false;
-    recognition.continuous = true; // ده المهم عشان يفضل live
+    recognition.continuous = false; // false عشان نتحكم بالـ loop
     recognition.maxAlternatives = 1;
 
-    recognition.onresult = async (event) => {
-      const transcript = event.results[event.results.length - 1][0].transcript;
-      console.log("User said:", transcript);
-
-      try {
-        const res = await fetch(import.meta.env.VITE_API_URL + "/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: transcript }),
-        });
-        const data = await res.json();
-        setAnswer(data.reply);
-        speak(data.reply);
-      } catch (err) {
-        console.error(err);
-        setAnswer("حصلت مشكلة في السيرفر");
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript.trim();
+      if (transcript) {
+        recognition.stop(); // وقف مؤقت قبل TTS
+        sendMessage(transcript);
       }
     };
 
-    recognition.onerror = (e) => {
-      console.error("Speech recognition error", e);
+    recognition.onerror = () => {
       setRecording(false);
+      isStoppedRef.current = true;
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
-    setRecording(true);
+  }, []);
+
+  const toggleRecording = () => {
+    if (recording) {
+      recognitionRef.current?.stop();
+      setRecording(false);
+      isStoppedRef.current = true;
+    } else {
+      isStoppedRef.current = false;
+      recognitionRef.current?.start();
+      setRecording(true);
+    }
   };
 
-  const stopLiveChat = () => {
-    recognitionRef.current?.stop();
-    setRecording(false);
+  const handleSendText = () => {
+    if (message.trim()) {
+      sendMessage(message);
+      setMessage("");
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center gap-6 p-4">
+
+      {/* صورة */}
       <div className="w-72 rounded-2xl bg-gray-900 p-2 shadow-xl">
-        <img src={cvImage} alt="CV" className="rounded-xl object-cover" />
+        <img src={cvImage} alt="CV" className="rounded-xl" />
       </div>
 
-     
-
+      {/* Chat Box */}
       <div className="w-full max-w-md bg-gray-900 rounded-xl p-4">
-        <h2 className="text-indigo-400 font-bold mb-2">Chatbot Answer:</h2>
-        <div className="text-gray-300 p-2 rounded-lg bg-gray-800 min-h-[60px]">{answer}</div>
+        <h2 className="text-indigo-400 font-bold mb-2"> Ahmed Ebeedy Chatbot</h2>
+        <div className="bg-gray-800 p-3 rounded-lg min-h-[70px] text-gray-300 mb-3">
+          {answer || "Ask Me Any Question.....💬"}
+        </div>
+
+        {/* الكتابة اليدوية */}
+        <div className="flex gap-2 mb-3">
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Write Your Message..."
+            className="flex-1 px-3 py-2 rounded-lg bg-gray-700 outline-none"
+          />
+          <button
+            onClick={handleSendText}
+            className="bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-600"
+          >
+            Send
+          </button>
+        </div>
       </div>
-        <div className="flex gap-2 ">
-                <button
-                  onClick={recording ? stopLiveChat : startLiveChat}
-                  className={`px-4 py-2 rounded-lg ${recording ? "bg-red-500" : "bg-green-500"} hover:opacity-90 transition`}
-                >
-                  {recording ? "  End" : "Start"}
-                </button>
-              </div>
-      <a
-        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 w-14 h-14 rounded-full bg-green-500 flex items-center justify-center shadow-lg hover:bg-green-600 transition z-50"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-7 h-7">
-          <path d="M20.52 3.48A11.92 11.92 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.07 1.52 5.78L0 24l6.35-1.67A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.18-3.48-8.52z" />
-        </svg>
-      </a>
+
+      {/* Voice Controls */}
+      <div className="flex gap-3">
+        <button
+          onClick={toggleRecording}
+          className={`px-5 py-2 rounded-lg ${
+            recording ? "bg-red-500" : "bg-green-500"
+          }`}
+        >
+          {recording ? "Stop Voice" : "Start Voice"}
+        </button>
+      </div>
     </div>
   );
 }

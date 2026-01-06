@@ -41,8 +41,8 @@ export default function Footer({ whatsappNumber, message }) {
             </Link>
           </li>
           <li>
-            <Link to="/skills" className="hover:text-indigo-500 transition">
-              Skills
+            <Link to="/projects" className="hover:text-indigo-500 transition">
+              Projects
             </Link>
           </li>
           <li>
