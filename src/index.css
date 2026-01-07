@@ -6,6 +6,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 @import "flowbite/src/themes/default";
 
-@plugin "flowbite/plugin";
 
-@source "../node_modules/flowbite";
+
+.glow {
+    text-shadow: 0 0 8px rgba(99, 102, 241, 0.8), 0 0 12px rgba(99, 102, 241, 0.6);
+  }
+  

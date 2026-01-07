@@ -12,23 +12,56 @@ export default function Navbar() {
   ];
 
   return (
-    <>
-      {/* mobile menu */}
+    <nav className="fixed w-full z-50 shadow-lg">
+      <div className="max-w-6xl mx-auto flex justify-between items-center px-4 py-3
+                      bg-white/10 backdrop-blur-xl rounded-b-2xl border border-white/20
+                      shadow-indigo-500/40">
+        {/* Logo */}
+        <div className="text-2xl font-bold text-indigo-500 glow">Ahmed Ebeedy</div>
+
+        {/* Desktop Links */}
+        <ul className="hidden md:flex gap-6">
+          {navItems.map((item) => (
+            <li key={item.path}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  `font-semibold hover:text-indigo-400 transition-colors ${
+                    isActive ? "text-indigo-500 glow" : "text-gray-300"
+                  }`
+                }
+              >
+                {item.name}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+
+        {/* Mobile Toggle */}
+        <button
+          className="md:hidden text-2xl"
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          {mobileOpen ? "✖" : "☰"}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
       <ul
-        className={`
-          md:hidden flex flex-col gap-4 px-6 pb-4 text-center
-          bg-white/10 backdrop-blur-xl rounded-b-2xl
-          transition-all duration-300 ease-out
-          ${mobileOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5 pointer-events-none"}
-        `}
+        className={`md:hidden flex flex-col gap-4 px-6 pb-4 text-center
+                    bg-white/10 backdrop-blur-xl rounded-b-2xl border border-white/20
+                    shadow-indigo-500/40 overflow-hidden
+                    transition-all duration-300 ease-out
+                    ${mobileOpen ? "max-h-96 opacity-100 py-4" : "max-h-0 opacity-0 py-0"}`}
       >
         {navItems.map((item) => (
           <li key={item.path}>
             <NavLink
               to={item.path}
               className={({ isActive }) =>
-                `block py-2 font-semibold text-lg transition-colors
-                 ${isActive ? "text-indigo-500" : "text-gray-200 hover:text-white"}`
+                `block py-2 font-semibold text-lg ${
+                  isActive ? "text-indigo-500 glow" : "text-gray-200"
+                }`
               }
               onClick={() => setMobileOpen(false)}
             >
@@ -37,6 +70,6 @@ export default function Navbar() {
           </li>
         ))}
       </ul>
-    </>
+    </nav>
   );
 }

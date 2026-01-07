@@ -1,5 +1,5 @@
 import React from "react";
-import mylogo from "../../assets/images/mylogo.png";
+import mylogo from "../../../public/mylogo-EfxEviE_.png";
 import { FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
