@@ -4,8 +4,14 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+
   server: {
-    historyApiFallback: true
-  }
-  
+    fs: {
+      strict: false,
+    },
+  },
+
+  optimizeDeps: {
+    force: true,
+  },
 });

@@ -5,27 +5,36 @@ export default function Home() {
   const [answer, setAnswer] = useState("");
   const [message, setMessage] = useState("");
   const [recording, setRecording] = useState(false);
-  const recognitionRef = useRef(null);
-  const isStoppedRef = useRef(true); // عشان نعرف لو المستخدم ضغط Stop
 
-  // -------- TTS --------
+  const recognitionRef = useRef(null);
+  const isStoppedRef = useRef(true);
+
+  // ---------- Check voice support ----------
+  const isVoiceSupported =
+    typeof window !== "undefined" &&
+    (window.SpeechRecognition || window.webkitSpeechRecognition);
+
+  // ---------- Text To Speech ----------
   const speak = (text) => {
     return new Promise((resolve) => {
       if (!window.speechSynthesis || !text) return resolve();
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "ar-EG";
       utterance.rate = 1.8;
       utterance.onend = resolve;
+
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
     });
   };
 
-  // -------- Send message to server --------
+  // ---------- Send message ----------
   const sendMessage = async (msg) => {
     if (!msg.trim()) return;
+
     try {
-      const res = await fetch("/api/chat", {  // <-- هنا استخدمنا الـ API الجديد
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg }),
@@ -35,8 +44,8 @@ export default function Home() {
       setAnswer(data.reply);
       await speak(data.reply);
 
-      // بعد ما TTS يخلص نرجع نسمع لو recording مش متوقف
       if (!isStoppedRef.current) recognitionRef.current?.start();
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       setAnswer("Server failed");
       await speak("Server failed");
@@ -44,22 +53,23 @@ export default function Home() {
     }
   };
 
-  // -------- Initialize recognition --------
+  // ---------- Initialize Speech Recognition ----------
   useEffect(() => {
+    if (!isVoiceSupported) return;
+
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
 
     const recognition = new SpeechRecognition();
     recognition.lang = "ar-EG";
     recognition.interimResults = false;
-    recognition.continuous = false; // false عشان نتحكم بالـ loop
+    recognition.continuous = false;
     recognition.maxAlternatives = 1;
 
     recognition.onresult = (e) => {
       const transcript = e.results[0][0].transcript.trim();
       if (transcript) {
-        recognition.stop(); // وقف مؤقت قبل TTS
+        recognition.stop();
         sendMessage(transcript);
       }
     };
@@ -70,9 +80,14 @@ export default function Home() {
     };
 
     recognitionRef.current = recognition;
-  }, []);
 
+    return () => recognition.stop();
+  }, [isVoiceSupported]);
+
+  // ---------- Voice toggle ----------
   const toggleRecording = () => {
+    if (!isVoiceSupported) return;
+
     if (recording) {
       recognitionRef.current?.stop();
       setRecording(false);
@@ -84,6 +99,7 @@ export default function Home() {
     }
   };
 
+  // ---------- Send text ----------
   const handleSendText = () => {
     if (message.trim()) {
       sendMessage(message);
@@ -92,50 +108,62 @@ export default function Home() {
   };
 
   return (
-   <>
     <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center gap-6 p-4">
 
-{/* صورة */}
-<div className="w-72 rounded-2xl bg-gray-900 p-2 shadow-xl">
-  <img src={cvImage} alt="CV" className="rounded-xl" />
-</div>
+      {/* Image */}
+      <div className="w-72 rounded-2xl bg-gray-900 p-2 shadow-xl">
+        <img
+          src={cvImage}
+          alt="CV"
+          className="rounded-xl"
+          loading="lazy"
+        />
+      </div>
 
-{/* Chat Box */}
-<div className="w-full max-w-md bg-gray-900 rounded-xl p-4">
-  <h2 className="text-indigo-400 font-bold mb-2">Ahmed Ebeedy Chatbot</h2>
-  <div className="bg-gray-800 p-3 rounded-lg min-h-[70px] text-gray-300 mb-3">
-    {answer || "iam ahmed ebeedy assistant.... 💬"}
-  </div>
+      {/* Chat box */}
+      <div className="w-full max-w-md bg-gray-900 rounded-xl p-4">
+        <h2 className="text-indigo-400 font-bold mb-2">
+          Ahmed Ebeedy Chatbot
+        </h2>
 
-  {/* الكتابة اليدوية */}
-  <div className="flex gap-2 mb-3">
-    <input
-      value={message}
-      onChange={(e) => setMessage(e.target.value)}
-      placeholder=" Ask Question..."
-      className="flex-1 px-3 py-2 rounded-lg bg-gray-700 outline-none"
-    />
-    <button
-      onClick={handleSendText}
-      className="bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-600"
-    >
-      Send
-    </button>
-  </div>
-</div>
+        <div className="bg-gray-800 p-3 rounded-lg min-h-[70px] text-gray-300 mb-3">
+          {answer || "👋 اسألني عن Ahmed Ebeedy أو شغله"}
+        </div>
 
-{/* Voice Controls */}
-<div className="flex gap-3">
-  <button
-    onClick={toggleRecording}
-    className={`px-5 py-2 rounded-lg ${
-      recording ? "bg-red-500" : "bg-green-500"
-    }`}
-  >
-    {recording ? "Stop Voice" : "Start Voice"}
-  </button>
-</div>
-</div>
-   </>
+        {/* Text input */}
+        <div className="flex gap-2 mb-3">
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Ask a question..."
+            className="flex-1 px-3 py-2 rounded-lg bg-gray-700 outline-none"
+          />
+          <button
+            onClick={handleSendText}
+            className="bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-600 transition"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+
+      {/* Voice control */}
+      <button
+        onClick={toggleRecording}
+        disabled={!isVoiceSupported}
+        className={`px-5 py-2 rounded-lg transition
+          ${recording ? "bg-red-500" : "bg-green-500"}
+          ${!isVoiceSupported && "opacity-50 cursor-not-allowed"}
+        `}
+      >
+        {recording ? "Stop Voice" : "Start Voice"}
+      </button>
+
+      {!isVoiceSupported && (
+        <p className="text-sm text-gray-400">
+          Voice recognition is not supported in this browser
+        </p>
+      )}
+    </div>
   );
 }
