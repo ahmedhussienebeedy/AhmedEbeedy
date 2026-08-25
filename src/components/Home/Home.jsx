@@ -7,7 +7,7 @@ export default function Home() {
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/20140550125?text=Hello%20Ahmed,%20I%20want%20to%20work%20with%20you"
+        href="https://wa.me/201040550125?text=Hello%20Ahmed,%20I%20want%20to%20work%20with%20you"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 bg-green-500 p-4 rounded-full shadow-lg hover:bg-green-600 transition text-white text-2xl animate-bounce"
